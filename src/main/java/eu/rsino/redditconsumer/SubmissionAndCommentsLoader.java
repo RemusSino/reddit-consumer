@@ -66,7 +66,7 @@ public class SubmissionAndCommentsLoader {
     }
 
     private List<Comment> getCommentsFromReddit(List<Submission> submissions) {
-        return submissions.stream()
+        return submissions.parallelStream()
                 .map((Submission submission) -> commentConsumer.getComments(submission,
                         "t1_" + lastCommentId.get()))
                 .flatMap(Collection::stream)
@@ -81,7 +81,7 @@ public class SubmissionAndCommentsLoader {
     }
 
     private List<Submission> getSubmissionsFromReddit() {
-        return subreddits.stream()
+        return subreddits.parallelStream()
                 .map((String subreddit) -> submissionConsumer.getSubmissions(subreddit,
                         "t3_" + lastSubmissionId.get()))
                 .flatMap(Collection::stream)
