@@ -37,7 +37,7 @@ public class SubmissionAndCommentsLoader {
         this.submissionRepository = submissionRepository;
     }
 
-    @Scheduled(initialDelay = 5000, fixedDelay = 5000)
+    @Scheduled(initialDelay = 5000, fixedDelay = 60000)
     public void loadSubmissionAndComments() {
         List<Submission> submissions = subreddits.stream()
                 .map(submissionConsumer::getSubmissions)

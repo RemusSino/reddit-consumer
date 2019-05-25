@@ -36,7 +36,7 @@ public class SubmissionDeserializer extends StdDeserializer<SubmissionList> {
             JsonNode submissionJsonNode = childrenIterator.next();
             submissionBuilder.title(submissionJsonNode.get("data").get("title").asText())
                     .subreddit(submissionJsonNode.get("data").get("subreddit").asText())
-                    .redditId(submissionJsonNode.get("data").get("subreddit_id").asText());
+                    .redditId(submissionJsonNode.get("data").get("id").asText());
             result.add(submissionBuilder.build());
         }
 
