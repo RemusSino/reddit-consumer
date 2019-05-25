@@ -4,8 +4,8 @@
 package eu.rsino.redditconsumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.rsino.redditconsumer.model.CommentList;
-import eu.rsino.redditconsumer.model.SubmissionList;
+import eu.rsino.redditconsumer.model.CommentListWrapper;
+import eu.rsino.redditconsumer.model.SubmissionListWrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +27,14 @@ public class JsonDeserializerTest {
     @Test
     public void testSubmissionListDeserializer() throws IOException {
         File resource = new ClassPathResource("reddit-submission.json").getFile();
-        SubmissionList submissionList = objectMapper.readValue(resource, SubmissionList.class);
+        SubmissionListWrapper submissionList = objectMapper.readValue(resource, SubmissionListWrapper.class);
         assertThat(submissionList.get()).hasSize(25);
     }
 
     @Test
     public void testCommentListDeserializer() throws IOException {
         File resource = new ClassPathResource("reddit-comment.json").getFile();
-        CommentList commentList = objectMapper.readValue(resource, CommentList.class);
+        CommentListWrapper commentList = objectMapper.readValue(resource, CommentListWrapper.class);
         assertThat(commentList.get()).isNotEmpty();
     }
 }

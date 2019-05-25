@@ -6,10 +6,10 @@ package eu.rsino.redditconsumer.model;
 import java.util.Collections;
 import java.util.List;
 
-public class CommentList {
+public class CommentListWrapper {
     private List<Comment> commentList;
 
-    public CommentList(List<Comment> commentList) {
+    public CommentListWrapper(List<Comment> commentList) {
         this.commentList = commentList;
     }
 

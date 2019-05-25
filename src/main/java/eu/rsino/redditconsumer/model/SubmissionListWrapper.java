@@ -6,10 +6,10 @@ package eu.rsino.redditconsumer.model;
 import java.util.Collections;
 import java.util.List;
 
-public class SubmissionList {
+public class SubmissionListWrapper {
     private List<Submission> submissions;
 
-    public SubmissionList(List<Submission> submissions) {
+    public SubmissionListWrapper(List<Submission> submissions) {
         this.submissions = submissions;
     }
 

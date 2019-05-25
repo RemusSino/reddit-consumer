@@ -9,18 +9,25 @@ import eu.rsino.redditconsumer.model.Comment;
 import eu.rsino.redditconsumer.model.Submission;
 import eu.rsino.redditconsumer.repo.CommentRepository;
 import eu.rsino.redditconsumer.repo.SubmissionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class SubmissionAndCommentsLoader {
-
+    private AtomicReference<String> lastSubmissionId = new AtomicReference<>("");
+    private AtomicReference<String> lastCommentId = new AtomicReference<>("");
     @Value("${subreddits}")
     private List<String> subreddits;
     private CommentRetriever commentConsumer;
@@ -30,27 +37,54 @@ public class SubmissionAndCommentsLoader {
 
     @Autowired
     public SubmissionAndCommentsLoader(CommentRetriever commentConsumer,
-                                       SubmissionRetriever submissionConsumer, CommentRepository commentRepository, SubmissionRepository submissionRepository) {
+                                       SubmissionRetriever submissionConsumer,
+                                       CommentRepository commentRepository,
+                                       SubmissionRepository submissionRepository) {
         this.commentConsumer = commentConsumer;
         this.submissionConsumer = submissionConsumer;
         this.commentRepository = commentRepository;
         this.submissionRepository = submissionRepository;
     }
 
-    @Scheduled(initialDelay = 5000, fixedDelay = 60000)
+    @Scheduled(initialDelay = 10000, fixedDelay = 5000)
     public void loadSubmissionAndComments() {
-        List<Submission> submissions = subreddits.stream()
-                .map(submissionConsumer::getSubmissions)
+        log.info("Starting scheduled run at " + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        List<Submission> submissions = getSubmissionsFromReddit();
+        log.info("Found " + submissions.size() + " submissions");
+        saveSubmissionsToDb(submissions);
+
+        List<Comment> comments = getCommentsFromReddit(submissions);
+        log.info("Found " + comments.size() + " comments");
+        saveCommentsToDb(comments);
+    }
+
+    private void saveCommentsToDb(List<Comment> comments) {
+        if (!CollectionUtils.isEmpty(comments)) {
+            lastCommentId.set(comments.get(0).getRedditId());
+            commentRepository.saveAll(comments);
+        }
+    }
+
+    private List<Comment> getCommentsFromReddit(List<Submission> submissions) {
+        return submissions.stream()
+                .map((Submission submission) -> commentConsumer.getComments(submission,
+                        "t1_" + lastCommentId.get()))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
+    }
 
-        submissionRepository.saveAll(submissions);
+    private void saveSubmissionsToDb(List<Submission> submissions) {
+        if (!CollectionUtils.isEmpty(submissions)) {
+            lastSubmissionId.set(submissions.get(0).getRedditId());
+            submissionRepository.saveAll(submissions);
+        }
+    }
 
-        List<Comment> comments = submissions.stream()
-                .map(commentConsumer::getComments)
+    private List<Submission> getSubmissionsFromReddit() {
+        return subreddits.stream()
+                .map((String subreddit) -> submissionConsumer.getSubmissions(subreddit,
+                        "t3_" + lastSubmissionId.get()))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-
-        commentRepository.saveAll(comments);
     }
 }

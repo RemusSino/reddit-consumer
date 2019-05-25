@@ -27,11 +27,10 @@ public class Main {
         return restTemplate;
     }
 
-
     public class MyErrorHandler implements ResponseErrorHandler {
         @Override
-        public void handleError(ClientHttpResponse response) {
-            log.error("Error when making http request; response " + response.toString());
+        public void handleError(ClientHttpResponse response) throws IOException {
+            log.error("Error when making http request; response " + response.getRawStatusCode() + "; " + response.getStatusText());
         }
 
         @Override

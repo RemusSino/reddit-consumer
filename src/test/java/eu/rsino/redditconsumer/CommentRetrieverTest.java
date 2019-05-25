@@ -26,7 +26,10 @@ public class CommentRetrieverTest {
     @Test
     public void test() {
         List<Comment> pythonComments = commentRetriever.getComments(Submission.builder()
-                .redditId("bk8c2r").subreddit("python").build());
+                .redditId("bk8c2r").subreddit("python").build(), "");
         assertThat(pythonComments).isNotEmpty();
+        assertThat(pythonComments.get(0).getRedditId()).isNotEmpty();
+        assertThat(pythonComments.get(0).getComment()).isNotEmpty();
+        assertThat(pythonComments.get(0).getCreationTimestamp()).isNotZero();
     }
 }

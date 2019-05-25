@@ -5,7 +5,7 @@ package eu.rsino.redditconsumer.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.rsino.redditconsumer.model.Comment;
-import eu.rsino.redditconsumer.model.CommentList;
+import eu.rsino.redditconsumer.model.CommentListWrapper;
 import eu.rsino.redditconsumer.model.Submission;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.List;
 @Component
 @Slf4j
 public class CommentRetriever {
-    private static String url = "https://www.reddit.com/r/%s/comments/%s/.json";
+    private static String url = "https://www.reddit.com/r/%s/comments/%s/.json?limit=100&before=%s";
     private RestTemplate restTemplate;
     private ObjectMapper objectMapper;
 
@@ -34,20 +34,20 @@ public class CommentRetriever {
     }
 
     //todo: reuse the code
-    public List<Comment> getComments(Submission submission) {
+    public List<Comment> getComments(Submission submission, String lastCommentFullName) {
         log.info("Retrieving comments for submission: " + submission);
         HttpHeaders headers = new HttpHeaders();
         headers.add("User-agent", "Chrome");
         HttpEntity httpEntity = new HttpEntity(headers);
 
         ResponseEntity<String> commentResponse = restTemplate.exchange(String.format(url, submission.getSubreddit(), submission
-                .getRedditId()), HttpMethod.GET, httpEntity, String.class);
+                .getRedditId(), lastCommentFullName), HttpMethod.GET, httpEntity, String.class);
         if (!commentResponse.getStatusCode().is2xxSuccessful()
                 && commentResponse.hasBody())
             return Collections.emptyList();
 
         try {
-            return objectMapper.readValue(commentResponse.getBody(), CommentList.class).get();
+            return objectMapper.readValue(commentResponse.getBody(), CommentListWrapper.class).get();
         } catch (IOException e) {
             log.error("Exception when deserialize submission response " + commentResponse.getBody(), e);
             return Collections.emptyList();

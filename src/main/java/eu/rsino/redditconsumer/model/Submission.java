@@ -16,4 +16,5 @@ public class Submission {
     private String subreddit;
     private String redditId;
     private String title;
+    private long creationTimestamp;
 }

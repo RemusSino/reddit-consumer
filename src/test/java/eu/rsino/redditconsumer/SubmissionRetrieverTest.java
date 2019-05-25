@@ -23,7 +23,11 @@ public class SubmissionRetrieverTest {
 
     @Test
     public void test() {
-        List<Submission> pythonSubmission = submissionRetriever.getSubmissions("python");
-        assertThat(pythonSubmission).isNotEmpty();
+        List<Submission> pythonSubmission = submissionRetriever.getSubmissions("python", "");
+        assertThat(pythonSubmission).hasSize(100);
+        assertThat(pythonSubmission.get(0).getRedditId()).isNotEmpty();
+        assertThat(pythonSubmission.get(0).getTitle()).isNotEmpty();
+        assertThat(pythonSubmission.get(0).getSubreddit()).isNotEmpty();
+        assertThat(pythonSubmission.get(0).getCreationTimestamp()).isNotZero();
     }
 }

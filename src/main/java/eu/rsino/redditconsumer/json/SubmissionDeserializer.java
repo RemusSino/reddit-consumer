@@ -8,14 +8,14 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import eu.rsino.redditconsumer.model.Submission;
-import eu.rsino.redditconsumer.model.SubmissionList;
+import eu.rsino.redditconsumer.model.SubmissionListWrapper;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SubmissionDeserializer extends StdDeserializer<SubmissionList> {
+public class SubmissionDeserializer extends StdDeserializer<SubmissionListWrapper> {
 
     public SubmissionDeserializer() {
         this(null);
@@ -26,7 +26,7 @@ public class SubmissionDeserializer extends StdDeserializer<SubmissionList> {
     }
 
     @Override
-    public SubmissionList deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public SubmissionListWrapper deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         JsonNode node = p.getCodec().readTree(p);
         List<Submission> result = new LinkedList<>();
         JsonNode children = node.get("data").get("children");
@@ -36,10 +36,11 @@ public class SubmissionDeserializer extends StdDeserializer<SubmissionList> {
             JsonNode submissionJsonNode = childrenIterator.next();
             submissionBuilder.title(submissionJsonNode.get("data").get("title").asText())
                     .subreddit(submissionJsonNode.get("data").get("subreddit").asText())
-                    .redditId(submissionJsonNode.get("data").get("id").asText());
+                    .redditId(submissionJsonNode.get("data").get("id").asText())
+                    .creationTimestamp(submissionJsonNode.get("data").get("created_utc").asLong());
             result.add(submissionBuilder.build());
         }
 
-        return new SubmissionList(result);
+        return new SubmissionListWrapper(result);
     }
 }

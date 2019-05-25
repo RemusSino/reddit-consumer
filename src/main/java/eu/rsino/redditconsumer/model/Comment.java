@@ -15,4 +15,5 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Comment {
     private String redditId;
     private String comment;
+    private long creationTimestamp;
 }
