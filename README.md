@@ -1,5 +1,5 @@
 # reddit-consumer
-Consumes reddit submissions and comments for a list of subreddits, saves them to Mongo and exposes through a rest api.
+Consumes reddit submissions and comments for a list of subreddits, saves them to Mongo and exposes through a rest api. To run it you can use docker with this command: docker-compose up
 
 For the data-retriever, you can configure the list of subreddits to be monitored by editing the application.yml file. The data-retriever will monitor the configured subreddits for the submissions and comments made and it will store them in MongoDB, in the "reddit" database.
 
