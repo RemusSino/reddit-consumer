@@ -1,0 +1,21 @@
+version: '3.3'
+
+services:
+    db:
+        image: mongo:3.6
+        ports:
+            - "27017:27017"
+            
+    reddit-consumer:
+        build: ./data-retriever
+        ports:
+            - "8989:8989"
+        depends_on:
+            - db
+        
+    rest-api:
+        build: ./rest-api
+        ports:
+            - "5000:5000"
+        depends_on:
+            - reddit-consumer

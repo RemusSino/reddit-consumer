@@ -1,5 +1,0 @@
-subreddits: python, java, go
-spring.data.mongodb:
-  host: localhost
-  port: 27099
-  database: reddit

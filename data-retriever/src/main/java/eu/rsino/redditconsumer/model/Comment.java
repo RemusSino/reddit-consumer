@@ -6,15 +6,18 @@ package eu.rsino.redditconsumer.model;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Builder
 @ToString
-@Document("submission")
+@Document("comment")
 @Getter
-public class Submission {
-    private String subreddit;
+public class Comment {
     private String redditId;
-    private String title;
+    private String comment;
+    @Indexed
+    private String subreddit;
+    @Indexed
     private long creationTimestamp;
 }

@@ -62,7 +62,8 @@ public class CommentDeserializer extends StdDeserializer<CommentListWrapper> {
             Comment.CommentBuilder commentBuilder = Comment.builder();
             commentBuilder.comment(commentJsonNode.get("data").get("body").asText())
                     .redditId(commentJsonNode.get("data").get("id").asText())
-                    .creationTimestamp(commentJsonNode.get("data").get("created_utc").asLong());
+                    .creationTimestamp(commentJsonNode.get("data").get("created_utc").asLong())
+                    .subreddit(commentJsonNode.get("data").get("subreddit").asText());
             commentAndReplies.add(commentBuilder.build());
             JsonNode repliesJsonNode = commentJsonNode.get("data").get("replies");
             if (!repliesJsonNode.isNull()
