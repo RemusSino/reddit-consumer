@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Builder
@@ -17,6 +18,7 @@ public class Submission {
     @Indexed
     private String subreddit;
     private String redditId;
+    @TextIndexed
     private String title;
     @Indexed
     private long creationTimestamp;

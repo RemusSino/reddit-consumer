@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Builder
@@ -15,6 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 public class Comment {
     private String redditId;
+    @TextIndexed
     private String comment;
     @Indexed
     private String subreddit;
